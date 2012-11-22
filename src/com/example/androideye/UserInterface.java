@@ -42,9 +42,7 @@ public class UserInterface extends Activity implements OnTouchListener, Recognit
 	
 	public static final int MAX_SAMPLES = 10;
 	public static final int TOP = 3;
-	public static final double THRESHOLD = 1.9;
-	public static final double DETECT_SCALE = 0.25;
-	public static final double REC_SCALE = 0.5;
+	public static final double DETECT_SCALE = 0.5;
 
 	ImageButton speakButton = null;
 	

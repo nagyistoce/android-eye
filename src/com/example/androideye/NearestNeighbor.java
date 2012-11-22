@@ -333,7 +333,7 @@ public class NearestNeighbor{
 			
 			fis = new FileInputStream(trainSet);
 			bis = new BufferedInputStream(fis,2*1024);
-			filein = new DataInputStream(fis);//buffer-100k
+			filein = new DataInputStream(bis);//buffer-100k
 			
 			fr = new FileReader(trainId);
 			IDin = new BufferedReader(fr, 2*1024);

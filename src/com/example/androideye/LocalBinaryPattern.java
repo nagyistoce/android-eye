@@ -15,8 +15,8 @@ import android.util.Pair;
 
 public class LocalBinaryPattern extends FaceDescriptor{
 
-	public static final int WIDTH = 100;
-	public static final int HEIGHT = 200;
+	public static final int WIDTH = 75;
+	public static final int HEIGHT = 150;
 	
 	double windowW, windowH;
 	long time;
@@ -217,7 +217,7 @@ public class LocalBinaryPattern extends FaceDescriptor{
 	public Collection<Double> getDescriptor(Bitmap img) {
 		// TODO Auto-generated method stub
 		
-		Bitmap resImg = FaceImage.resizeBitmap(img, WIDTH/img.getWidth());
+		Bitmap resImg = FaceImage.resizeBitmap(img, (double)WIDTH/img.getWidth());
 		
 		if(windowW==1.0 && windowH==1.0)//if the window size is 1.0 is not necessary allocate new Bitmaps
 		{
