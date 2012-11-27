@@ -11,7 +11,12 @@ import android.util.Log;
 import android.util.Pair;
 
 
-
+/**
+ * Active Shape Model face descriptor, uses the Stasm library
+ * 
+ * @author Alan Zanoni Peixinho
+ *
+ */
 public class StasmLib extends FaceDescriptor{
 	
 	private final String TEMP_FILE = "/mnt/sdcard/alan.bmp";//Database.BASE_DIR+"temp.bmp";
@@ -27,11 +32,18 @@ public class StasmLib extends FaceDescriptor{
 	public static native double[] getFeatures(String fileName, String confFile);
 	public static native double[] getPoints(int[] img, int width, int height);
 	
+	/**
+	 * Creates an instance of {@link StasmLib} using the default stasm config file.
+	 */
 	public StasmLib() {
 		// TODO Auto-generated constructor stub
 		confFile = "/mnt/sdcard/data/mu-68-1d.conf";
 	}
 	
+	/**
+	 * Creates an instance of {@link StasmLib} using the indicated stasm config file.
+	 * @param confFile Stasm config file
+	 */
 	public StasmLib(String confFile){
 		this.confFile = new String(confFile);
 	}
@@ -102,6 +114,12 @@ public class StasmLib extends FaceDescriptor{
 	
 	//euclidean distance between samples
 	@SuppressWarnings("unused")
+	/**
+	 * Computes the euclidean distance between two samples.
+	 * @param i1 First sample descriptor.
+	 * @param i2 Second sample descriptor.
+	 * @return Return the euclidean distance between the samples.
+	 */
 	private double euclideanDistance(Collection<Double> i1, Collection<Double> i2){
 		double dist = 0.0;
 		double value;

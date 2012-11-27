@@ -11,7 +11,11 @@ import java.util.Random;
 import android.util.Log;
 import android.util.Pair;
 
-
+/**
+ * Manipulate the Android Eye database.
+ * @author Alan Zanoni Peixinho
+ *
+ */
 public class Database {
 	
 	/*
@@ -26,6 +30,11 @@ public class Database {
 		}
 	}
 	
+	
+	/**
+	 * List the people present in the database.
+	 * @return Return a list with the people present in database.
+	 */
 	public static List<File> listPeople()
 	{
 		File dirlist= new File(BASE_DIR);
@@ -42,6 +51,12 @@ public class Database {
     	return people;
 	}
 	
+	/**
+	 * Split a list of images. Used to generate experiments database.
+	 * @param img List of images.
+	 * @param perc1 [0.0,1.0] The first list has perc1 of the images. The second list has (1-perc1) of the images. 
+	 * @return Return a pair containing the two lists.
+	 */
 	public static Pair<LinkedList<File>, LinkedList<File> > split(List<File> img, double perc1){
 		LinkedList<File> tempList = new LinkedList<File>(img);
 		Collections.shuffle(tempList, new Random(42));
@@ -65,6 +80,9 @@ public class Database {
 		return new Pair<LinkedList<File>, LinkedList<File>>(set1, set2);
 	}
 	
+	/**
+	 * Clear the database.
+	 */
 	public void clear(){
 		File dir = new File(BASE_DIR);
 		
@@ -75,12 +93,22 @@ public class Database {
 		}
 	}
 	
+	/**
+	 * List all images of a person.
+	 * @param personId ID (label) of person.
+	 * @return Return a list with all images of <i>personId</i>.
+	 */
 	public static List<File> listImages(String personId)
     {
 		File dir = new File(BASE_DIR, personId);
 		return listImages(dir);
     }
 	
+	/**
+	 * List all images of a person.
+	 * @param personId ID (label) of person.
+	 * @return Return a list with all images of <i>personId</i>.
+	 */
 	public static List<File> listImages(File personDir)
     {
 		LinkedList<File> img = new LinkedList<File>();
@@ -94,6 +122,11 @@ public class Database {
 		return img;
     }
 	
+	/**
+	 * Get the name of a person.
+	 * @param personDir personId ID (label) of person.
+	 * @return Return the real name of <i>personId</i>
+	 */
 	public static String personName(File personDir){
 		String s = null;
 		File f = new File(personDir, "name.txt");
@@ -108,6 +141,12 @@ public class Database {
 		return s;
 	}
 	
+
+	/**
+	 * Get the name of a person.
+	 * @param personDir personId ID (label) of person.
+	 * @return Return the real name of <i>personId</i>
+	 */
 	public static String personName(String personId){
 		File dir = new File(BASE_DIR, personId);
 		return personName(dir);

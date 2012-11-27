@@ -23,7 +23,11 @@ import android.graphics.Bitmap;
 import android.graphics.Rect;
 import android.util.Log;
 
-
+/**
+ * Nearest Neighbor classifier to face recognition.
+ * @author Alan Zanoni Peixinho
+ *
+ */
 public class NearestNeighbor{
 	public static final String CLASSIFIER_FILE = new File(Database.BASE_DIR, "samples.dat").getAbsolutePath();
 	public static final String ID_FILE = new File(Database.BASE_DIR,"id.dat").getAbsolutePath();
@@ -53,14 +57,18 @@ public class NearestNeighbor{
 	
 	private int consulteds = 0;
 	
-		
+	/**
+	 * Creates a NearestNeighbor instance using the face detector and descriptor indicateds.
+	 * @param det Face Detector to be used
+	 * @param desc Face Descriptor to be used
+	 */
 	public NearestNeighbor(FaceDetect det, FaceDescriptor desc){
 		setDescriptor(desc);
 		setDetector(det);
 		initialize();
 	}
 	
-	public void initialize() {
+	private void initialize() {
 		Locale.setDefault(Locale.US);//to read the double from text file
 		cur = new LinkedList<Double>();
 		
@@ -74,25 +82,45 @@ public class NearestNeighbor{
 		
 	}
 	
+	/**
+	 * 
+	 * @return Check if the classifier is already trained.
+	 */
 	public boolean isTrained(){
 		return trainId.exists() && trainSet.exists();
 	}
 	
+	/**
+	 * Creates a NearestNeighbor instance using the default face detector ({@link SkinFaceDetector}) and descriptor ({@link LocalBinaryPattern}).
+	 */
 	public NearestNeighbor(){
 		setDescriptor(new LocalBinaryPattern());
 		setDetector(new SkinFaceDetector());
 		initialize();
 	}
 	
+	/**
+	 * Set the face descriptor
+	 * @param d Face Descriptor
+	 */
 	private void setDescriptor(FaceDescriptor d)
 	{
 		descriptor = d;
 	}
 	
+	/**
+	 * Set the face detector
+	 * @param d Face Detector
+	 */
 	private void setDetector(FaceDetect d){
 		detector = d;
 	}
 	
+	
+	/**
+	 * Train the classifier using all images in the default database indicated in {@link Database#BASE_DIR}.
+	 * @param ui Main Interface
+	 */
 	public void train(UserInterface ui){
 	
 		trainSet.delete();//if exists, doesn't exist anymore
@@ -167,6 +195,13 @@ public class NearestNeighbor{
 		
 	}
 	
+	
+	/**
+	 * @deprecated
+	 * Train the classifier using the indicated files.
+	 * @param id Label list corresponding the images list.
+	 * @param imgs Images list to be used in the training step.
+	 */
 	//train the classifier with the dataset
 		public void _train(Collection<String> id, Collection<File> imgs){
 			
@@ -219,7 +254,11 @@ public class NearestNeighbor{
 			}
 		}
 	
-	//train the classifier with the dataset
+	/**
+	* Train the classifier using the indicated files.
+	* @param id Label list corresponding the images list.
+	* @param imgs Images list to be used in the training step.
+	*/
 	public void train(Collection<String> id, Collection<File> imgs){
 		
 		assert(id.size()==imgs.size()):"The labels number and images number is different";
@@ -281,7 +320,9 @@ public class NearestNeighbor{
 		}
 	}
 	
-	//store the classifier in file
+	/**
+	 * Store the number of descriptors in classifier file.
+	 * */
 	private void setNumFeatures(int numFeatures){
 		nFeatures=numFeatures;
 		try {
@@ -303,7 +344,10 @@ public class NearestNeighbor{
 		
 		//Log.v("Info", "Features Number Stored: "+nFeatures);
 	}
-	//get the classifier in file
+	
+	/**
+	 * Get the number of descriptors in classifier file, and store in nFeatures var.
+	 */
 	private void getNumFeatures(){
 		
 		try {
@@ -355,13 +399,18 @@ public class NearestNeighbor{
 		nFeatures = x;
 		//Log.v("Info", "Features Number Loaded: "+nFeatures);
 	}
-	//store classifier in file
-	private void addSample(String s, Collection<Double> c)
+	
+	/**
+	 * Store a sample in classifier file.
+	 * @param sampleLabel Sample label
+	 * @param sampleDescriptor Sample descriptor
+	 */
+	private void addSample(String sampleLabel, Collection<Double> sampleDescriptor)
 	{
 		try{
-			IDout.write(s+'\n');
-			Assert.assertTrue(c.size()==nFeatures);
-			for (double d: c) {
+			IDout.write(sampleLabel+'\n');
+			Assert.assertTrue(sampleDescriptor.size()==nFeatures);
+			for (double d: sampleDescriptor) {
 				fileout.writeFloat((float)d);
 			}
 		} catch (IOException e) {
@@ -370,7 +419,11 @@ public class NearestNeighbor{
 		}
 		
 	}
-	//get the classifier in file
+
+	/**
+	 * Get the sample in classifier file, stores the label in curId var and the descriptor in cur var.
+	 * @return Return <code>false</code> if the end of file is reached. 
+	 */
 	private boolean getSample(){
 		
 		cur.clear();
@@ -395,7 +448,11 @@ public class NearestNeighbor{
 	
 
 	
-	//get the label of c sample
+	/**
+	 * Get the closest sample label to the indicated sample
+	 * @param c Sample Descriptor
+	 * @return Returns the label of the closest sample in training database.
+	 */
 	private String closest(Collection<Double> c){
 		String minId = null;
 		double minDist = Double.MAX_VALUE;
@@ -440,7 +497,12 @@ public class NearestNeighbor{
 		return list;
 	}
 	
-	//get the label of c sample
+	/**
+	 * Get a list of closest sample labels to the indicated sample.
+	 * @param c Sample Descriptor
+	 * @param topsize Number of closest samples to be returned.
+	 * @return Returns a list of the closest sample labels.
+	 */
 	private Collection<String> topClosest(Collection<Double> c, int topsize){
 		String minId = null;
 		double minDist = Double.MAX_VALUE;
@@ -487,9 +549,21 @@ public class NearestNeighbor{
 		return topLabel;
 	}
 	
+	/**
+	 * Number of images consulteds in the database.
+	 * @return Number of images consulteds in the database.
+	 */
 	public int consultedInDatabase(){
 		return consulteds;
 	}
+	
+	
+	/**
+	 * Classify a image without face detection.
+	 * @deprecated
+	 * @param image Image used in face recognition.
+	 * @return Return the labels of each face found.
+	 */
 	
 	public Collection<String> _classify(Bitmap image){
 		
@@ -510,7 +584,11 @@ public class NearestNeighbor{
 		return labels;
 	}
 	
-	//detect faces, extract features and return the face labels
+	/**
+	 * Perform face recognition in each face found.
+	 * @param image Image used in face recognition.
+	 * @return Return the labels of each face found.
+	 */
 	public Collection<String> classify(Bitmap image){
 		
 		Log.v("NN","Classifying ...");
@@ -530,6 +608,12 @@ public class NearestNeighbor{
 		return labels;
 	}
 	
+	/**
+	 * Perform face recognition in an image returning the <i>topsize</i> closest labels.
+	 * @param img Image used in face recognition
+	 * @param topsize Number of labels returned.
+	 * @return Return the <i>topsize</i> closest labels.
+	 */
 	public Collection<String> topClassify(Bitmap img, int topsize){
 		Log.v("NN","Classifying ...");
 		//image = FaceImage.resizeBitmap(image, 0.5, 0.5);//down resolution to improve the face detection time

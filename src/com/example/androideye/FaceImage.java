@@ -15,16 +15,19 @@ import android.graphics.Paint;
 import android.graphics.Rect;
 import android.util.Log;
 
-
+/**
+ * Image utilities for face recognition.
+ * @author Alan Zanoni Peixinho.
+ * @author Everton Fernandes da Silva.
+ *
+ */
 public class FaceImage {
 	
-	/*static{
-		options = new BitmapFactory.Options();
-		options.inPreferredConfig = Bitmap.Config.ARGB_8888;
-		
-	}
-	*/
-	
+	/**
+	 * Load an image. Duuhr.
+	 * @param filename File containing image.
+	 * @return Return the image.
+	 */
 	public static Bitmap loadImage(String filename)
 	{
 		
@@ -32,15 +35,33 @@ public class FaceImage {
 		return b;
 	}
 	
+	/**
+	 * Load an image. Duuhr.
+	 * @param filename File containing image.
+	 * @return Return the image.
+	 */
 	public static Bitmap loadImage(File f)
 	{
 		return loadImage(f.getAbsolutePath());
 	}
 	
+	/**
+	 * Resize a bitmap in the indicated scale.
+	 * @param bm Image to be resized.
+	 * @param scale Scale used in resize.
+	 * @return Return a scaled image.
+	 */
 	public static Bitmap resizeBitmap(Bitmap bm, double scale) {
 		return resizeBitmap(bm, scale, scale);
 	}
 	
+	/**
+	 * Resize a bitmap in the indicated scale width and height.
+	 * @param bm Image to be resized.
+	 * @param scaleWidth Scale width used in resize.
+	 * @param scaleHeight Scale height used in resize.
+	 * @return Return a scaled image.
+	 */
 	public static Bitmap resizeBitmap(Bitmap bm, double scaleWidth, double scaleHeight) {
 		int width = bm.getWidth();
 		int height = bm.getHeight();
@@ -60,16 +81,32 @@ public class FaceImage {
 		return resizedBitmap;
 	}
 	
+	/**
+	 * Resize a rect size.
+	 * @param r Rect to be resized.
+	 * @param scale Scale used in resize.
+	 * @return Return a scaled Rect.
+	 */
 	public static Rect resizeRect(Rect r, double scale){
 		
 		return new Rect((int)(r.left*scale), (int)(r.top*scale), (int)(r.right*scale), (int)(r.bottom*scale));
 	}
 	
+	/**
+	 * Save an image in file.
+	 * @param b Image to be saved.
+	 * @param filename File to store image.
+	 */
 	public static void saveImage(Bitmap b, String filename)
 	{
 		saveImage(b, new File(filename));
 	}
 	
+	/**
+	 * Save an image in file.
+	 * @param b Image to be saved.
+	 * @param file File to store image.
+	 */
 	public static void saveImage(Bitmap bitmap, File file) {
 		// TODO Auto-generated method stub
 		
@@ -100,7 +137,12 @@ public class FaceImage {
 			}
 	}
 	
-	
+	/**
+	 * Crop a region of the image.
+	 * @param b Image to be cropped.
+	 * @param r Region to crop.
+	 * @return Return a cropped image.
+	 */
 	public static Bitmap cropFace(Bitmap b, Rect r)
 	{
 		Log.v("Croping", "Rect: ("+r.left+", "+r.top+") ("+r.right+", "+r.bottom+")");
@@ -109,6 +151,13 @@ public class FaceImage {
     	return Bitmap.createBitmap(b, r.left, r.top, r.width(), r.height());
 	}
 	
+	/**
+	 * Draw a rect in an image (Usefull to see the region in the image).
+	 * @param b Image to be drawn.
+	 * @param r Rect to be drawn.
+	 * @param color Color of drawn rectangle.
+	 * @return
+	 */
 	public static Bitmap drawRect(Bitmap b, Rect r, int color){
 		
 		Bitmap bitmap = Bitmap.createBitmap(b.getWidth(), b.getHeight(), b.getConfig());
@@ -125,6 +174,13 @@ public class FaceImage {
 		return bitmap;
 	}
 	
+	/**
+	 * Draw a rect in an image (Usefull to see the region in the image).
+	 * @param b Image to be drawn.
+	 * @param r List of rects to be drawn.
+	 * @param color Color of drawn rectangle.
+	 * @return
+	 */
 	public static Bitmap drawRects(Bitmap b, Collection<Rect> r, int color){
 		
 		Bitmap bitmap = Bitmap.createBitmap(b.getWidth(), b.getHeight(), b.getConfig());

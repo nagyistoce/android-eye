@@ -23,7 +23,11 @@ import android.view.View.OnTouchListener;
 import android.view.WindowManager;
 import android.widget.ImageButton;
 
-
+/**
+ * Tutorial User Interface.
+ * @author Alan Zanoni Peixinho
+ *
+ */
 public class Tutorial extends Activity implements OnTouchListener, RecognitionListener{
 
     private static final String TAG = "Tutorial";
