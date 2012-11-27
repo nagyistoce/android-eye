@@ -7,7 +7,12 @@ import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 
-
+/**
+ * Manage the configuration file.
+ * Still under development.
+ * @author Alan Zanoni Peixinho
+ *
+ */
 public class Config {
 
 	String appDir = null;

@@ -12,7 +12,11 @@ import android.graphics.Rect;
 import android.util.Log;
 import android.util.Pair;
 
-
+/**
+ * Local Binary Pattern descriptor.
+ * @author Alan Zanoni Peixinho.
+ *
+ */
 public class LocalBinaryPattern extends FaceDescriptor{
 
 	public static final int WIDTH = 75;
@@ -24,6 +28,11 @@ public class LocalBinaryPattern extends FaceDescriptor{
 	int pixels[];
 	FaceDetect detector = null;
 	
+	/**
+	 * Initialize some variables.
+	 * @param windowW Window width.
+	 * @param windowH Window height.
+	 */
 	private void initialize(double windowW, double windowH)
 	{
 		Log.v("LBP", "Initializing Local Binary Pattern Face Descriptor");
@@ -35,28 +44,49 @@ public class LocalBinaryPattern extends FaceDescriptor{
 		pixels = null;
 	}
 	
+	/**
+	 * Creates an instance of {@link LocalBinaryPattern} without windows.
+	 */
 	public LocalBinaryPattern()
 	{
 		setDetector(new SkinFaceDetector());
 		initialize(1.0, 1.0);
 	}
 	
+	/**
+	 * Creates an instance of {@link LocalBinaryPattern} with windows.
+	 * @param detect Face detector used.
+	 * @param windowPercentage Windows size percentage used in descriptor.
+	 */
 	public LocalBinaryPattern(FaceDetect detect, double windowPercentage) {
 		setDetector(detect);
 		initialize(windowPercentage, windowPercentage);
 	}
 	
+	/**
+	 * Creates an instance of {@link LocalBinaryPattern} with windows.
+	 * @param detect Face detector used.
+	 * @param windowW Window width.
+	 * @param windowH Window height.
+	 */
 	public LocalBinaryPattern(FaceDetect detect, double windowW, double windowH) {
 		setDetector(detect);
 		initialize(windowW, windowH);
 	}
 	
+	/**
+	 * Creates an instance of {@link LocalBinaryPattern} with windows.
+	 * @param detect Face detector used.
+	 */
 	public LocalBinaryPattern(FaceDetect detect) {
 		// TODO Auto-generated constructor stub
 		setDetector(detect);
 		initialize(1.0, 1.0);//a janela possui o tamanho da imagem
 	}
 	
+	/**
+	 * 
+	 */
 	@Override
 	public Pair<List<String>, List<Collection<Double>> > train(Collection<String> id, Collection<File> trainSet) {
 		// TODO Auto-generated method stub
@@ -84,15 +114,34 @@ public class LocalBinaryPattern extends FaceDescriptor{
 		return new Pair<List<String>, List<Collection<Double>> > (listId, list);
 	}
 	
+	/**
+	 * Converts a RGB color to grayscale.
+	 * @param color RGB color.
+	 * @return Return the corresponding grayscale color.
+	 */
 	private int gray(int color)
 	{
 		return (int) ((0.2126*Color.red(color)+0.7152*Color.green(color)+0.0722*Color.blue(color))%256);
 	}
 	
+	/**
+	 * Get the (x,y) pixel in the image array.
+	 * @param pixels Image array.
+	 * @param x Pixel line.
+	 * @param y Pixel Column.
+	 * @param width Image width.
+	 * @return Return the pixel value at (x,y).
+	 */
 	private int getPixel(int pixels[], int x, int y, int width)
 	{
 		return pixels[y*width+x];
 	}
+	
+	/**
+	 * Extract Local Binary Pattern histogram in the image.
+	 * @param img Image to be used.
+	 * @return Return the Local Binary Pattern Histogram.
+	 */
 	
 	private Collection<Double> lbp(Bitmap img){
 		
@@ -269,6 +318,12 @@ public class LocalBinaryPattern extends FaceDescriptor{
 		detector = f;
 	}
 	
+	/**
+	 * Compute the Chi-Square distance between samples.
+	 * @param i1 First sample.
+	 * @param i2 Second sample.
+	 * @return Return the Chi-Square sample between samples.
+	 */
 	//chi-square distance between samples
 	private double chiSquareDistance(Collection<Double> i1, Collection<Double> i2){
 		

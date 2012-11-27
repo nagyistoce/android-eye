@@ -7,7 +7,11 @@ import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.util.Log;
 
-
+/**
+ * Verify if it is the first time the App is running.
+ * @author Alan Zanoni Peixinho
+ *
+ */
 public class StartupChoiceActivity extends Activity {
     
 	private static final String TAG = "StartupChoice";

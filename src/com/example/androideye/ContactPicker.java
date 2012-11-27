@@ -20,7 +20,11 @@ import android.net.Uri;
 import android.provider.ContactsContract;
 import android.util.Log;
 
-
+/**
+ *  Get information of the phone contacts.
+ * @author Everton Fernandes da Silva
+ *
+ */
 public class ContactPicker {
 	
 	ContentResolver resolver = null;
@@ -33,6 +37,12 @@ public class ContactPicker {
 	private BufferedReader r1;
 	private BufferedReader r2;
 	
+	
+	/**
+	 * Creates an instance of ContactPicker.
+	 * @param cr ContentResolver.
+	 * @param maxSamples Maximum number of samples stored in database.
+	 */
 	public ContactPicker(ContentResolver cr, int maxSamples) {
 		// TODO Auto-generated constructor stub
   		resolver = cr;
@@ -61,6 +71,10 @@ public class ContactPicker {
         Log.v("cp", "OK");
 	}
 	
+	/**
+	 * Call the next contact.
+	 * @return Return <code>false</code> if the contact list is over.
+	 */
 	public boolean nextContact(){
 		
 		if(cont==0){
@@ -96,10 +110,18 @@ public class ContactPicker {
 		return cursor.moveToNext();
 	}
 	
+	/**
+	 * Get the index of current contact.
+	 * @return Return the index of the current contact.
+	 */
 	public int curContact(){
 		return cursor.getPosition();
 	}
 	
+	/**
+	 * Get the number of contacts.
+	 * @return Return the number of contacts.
+	 */
 	public int contactsNumber(){
 		return cursor.getCount();
 	}
@@ -114,6 +136,11 @@ public class ContactPicker {
       }
     }
 
+	/**
+	 * Load a contact photo and store in the database.
+	 * @param cr
+	 * @param id
+	 */
     private void loadContactPhoto(ContentResolver cr, long id) 
     {
         Uri uri = ContentUris.withAppendedId(ContactsContract.Contacts.CONTENT_URI, id);
@@ -184,7 +211,13 @@ public class ContactPicker {
         
     }
     
-    //compare if two files have equal content
+    
+    /**
+     * Compare if two files have the same content.
+     * @param f1 First file.
+     * @param f2 Second file.
+     * @return Return <code>true</code> if the files are equal.
+     */
     private boolean equalContent(File f1, File f2){
     	
     	try {
@@ -215,6 +248,10 @@ public class ContactPicker {
     	return true;
     }
     
+    /**
+     * Get all contacts and store in the database.
+     * @param intent
+     */
     private void getContacts(Intent intent)
     //public void getContactPhoto()
     {    	

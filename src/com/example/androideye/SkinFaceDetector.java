@@ -10,7 +10,12 @@ import android.media.FaceDetector;
 import android.media.FaceDetector.Face;
 import android.util.Log;
 
-
+/**
+ * 
+ * @author Everton Fernandes da Silva
+ * @author Alan Zanoni Peixinho
+ *
+ */
 public class SkinFaceDetector implements FaceDetect {
 
 	public static final int NUMBER_OF_FACES = 4;
@@ -23,6 +28,9 @@ public class SkinFaceDetector implements FaceDetect {
 	
 	int width, height;
 	
+	/**
+	 * Creates an instance of {@link SkinFaceDetector}. 
+	 */
 	public SkinFaceDetector(){
 		width = 640;
 		height = 480;
@@ -32,8 +40,15 @@ public class SkinFaceDetector implements FaceDetect {
         faces = new LinkedList<Rect>();
 		p = new PointF();
 		time = 0;
-}
+	}
 	
+	/**
+	 * The Android face detector returns a {@link Face} object, this function converts it to a rectangle.
+	 * @param f Android Face parameter.
+	 * @param imgwidth Image width.
+	 * @param imgheight Image height.
+	 * @return Return the rectangle that contains the face
+	 */
 	private Rect face2Rect(Face f, int imgwidth, int imgheight)
 	{
 		f.getMidPoint(p);
@@ -89,20 +104,22 @@ public class SkinFaceDetector implements FaceDetect {
 		return faces;
 	}
 	
-	public int normalSize()
-	{
-		return 5*10;
-	}
-
-	public Bitmap normalizeSize(Bitmap b)
-	{
-		return FaceImage.resizeBitmap(b, 5, 10);
-	}
-	
 	@Override
 	public double timeElapsed() {
 		// TODO Auto-generated method stub
 		return ((double)time)/1000;
+	}
+
+	@Override
+	public int normalSize() {
+		// TODO Auto-generated method stub
+		return 0;
+	}
+
+	@Override
+	public Bitmap normalizeSize(Bitmap b) {
+		// TODO Auto-generated method stub
+		return null;
 	}
 
 }

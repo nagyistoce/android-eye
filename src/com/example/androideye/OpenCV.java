@@ -2,7 +2,11 @@ package com.example.androideye;
 
 import android.graphics.Rect;
 
-
+/**
+ * Wrap some image functions using OpenCV Library.
+ * 
+ * @author André Marcelo Farina
+ */
 public class OpenCV {
 	static{
 		System.loadLibrary("opencv");

@@ -34,7 +34,11 @@ import android.view.WindowManager;
 import android.widget.ImageButton;
 
 
-
+/**
+ * Main Android Eye User Interface.
+ * @author Alan Zanoni Peixinho
+ *
+ */
 //Please forgive me for this code. I know it is ugly :P, but works
 public class UserInterface extends Activity implements OnTouchListener, RecognitionListener, SurfaceHolder{
 
