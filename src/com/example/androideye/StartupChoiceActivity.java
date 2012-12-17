@@ -15,10 +15,18 @@ import android.util.Log;
 public class StartupChoiceActivity extends Activity {
     
 	private static final String TAG = "StartupChoice";
+	private static boolean DEBUG = true;
 	
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        
+        if(DEBUG){
+	    	startActivity(new Intent(this, ExperimentRun.class));
+	    	//startActivity(new Intent(this, Tutorial.class));
+        	finish();
+	    	return;
+        }
 
         SharedPreferences mPrefs = getSharedPreferences("prefs", Context.MODE_PRIVATE);
         

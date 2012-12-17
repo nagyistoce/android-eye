@@ -71,9 +71,7 @@ public class NearestNeighbor{
 	private void initialize() {
 		Locale.setDefault(Locale.US);//to read the double from text file
 		cur = new LinkedList<Double>();
-		
-		descriptor.setDetector(detector);
-		
+				
 		trainSet = new File(CLASSIFIER_FILE);
 		trainId = new File(ID_FILE);
 		
@@ -198,7 +196,7 @@ public class NearestNeighbor{
 	
 	/**
 	 * @deprecated
-	 * Train the classifier using the indicated files.
+	 * Train the classifier using the indicated files with cropped faces.
 	 * @param id Label list corresponding the images list.
 	 * @param imgs Images list to be used in the training step.
 	 */
@@ -227,7 +225,6 @@ public class NearestNeighbor{
 			for (File file : imgs) {
 				Log.v("NN", "Current File: "+file.getName());
 				Bitmap b = FaceImage.loadImage(file);
-				//b = FaceImage.resizeBitmap(b, 0.5, 0.5);
 				String s = it.next();
 			
 				Collection<Double> desc = descriptor.getDescriptor(b);
@@ -238,6 +235,7 @@ public class NearestNeighbor{
 						setNumFeatures(desc.size());
 					}
 					addSample(s, desc);
+					//Log.v("NN", "Desc = "+desc);
 					
 					Log.v("NN", String.format("%s added to classifier.", file.getName()));
 					i++;
@@ -504,8 +502,6 @@ public class NearestNeighbor{
 	 * @return Returns a list of the closest sample labels.
 	 */
 	private Collection<String> topClosest(Collection<Double> c, int topsize){
-		String minId = null;
-		double minDist = Double.MAX_VALUE;
 		
 		//Log.v("NN", "Comparing to database");
 		
@@ -534,8 +530,10 @@ public class NearestNeighbor{
 			for (int j = 0; j < topsize; j++) {
 				String s = itLabel.next();
 				double d = itDist.next();
-				
+				//Log.v("NN", "Cur: " + curId + " -> " +cur);
 				if (dist<d) {
+					
+					//Log.v("NN", "dist = "+dist + " label: "+curId);
 					topDist.add(j, dist);
 					topLabel.add(j, new String(curId));
 					
@@ -545,6 +543,9 @@ public class NearestNeighbor{
 				}
 			}
 		}
+		
+		Log.v("NN", "Best labels = " + topLabel);
+		Log.v("NN", "Best distances = " + topDist);
 		consulteds = i;
 		return topLabel;
 	}

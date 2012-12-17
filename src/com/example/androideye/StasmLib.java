@@ -1,14 +1,10 @@
 package com.example.androideye;
 
-import java.io.File;
 import java.util.Collection;
-import java.util.Iterator;
 import java.util.LinkedList;
-import java.util.List;
 
 import android.graphics.Bitmap;
 import android.util.Log;
-import android.util.Pair;
 
 
 /**
@@ -17,7 +13,7 @@ import android.util.Pair;
  * @author Alan Zanoni Peixinho
  *
  */
-public class StasmLib extends FaceDescriptor{
+public class StasmLib implements FaceDescriptor{
 	
 	private final String TEMP_FILE = "/mnt/sdcard/alan.bmp";//Database.BASE_DIR+"temp.bmp";
 	
@@ -48,18 +44,7 @@ public class StasmLib extends FaceDescriptor{
 		this.confFile = new String(confFile);
 	}
 	
-	@Override
-	public void setDetector(FaceDetect detector) {
-		// TODO Auto-generated method stub
-		
-	}
-	@Override
-	public Pair<List<String>, List<Collection<Double>>> train(
-			Collection<String> id, Collection<File> trainSet) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-	@Override
+
 	public Collection<Double> getDescriptor(Bitmap img) {
 				
 		int width = img.getWidth();
@@ -112,36 +97,10 @@ public class StasmLib extends FaceDescriptor{
 		return (double)(time)/1000;
 	}
 	
-	//euclidean distance between samples
-	@SuppressWarnings("unused")
-	/**
-	 * Computes the euclidean distance between two samples.
-	 * @param i1 First sample descriptor.
-	 * @param i2 Second sample descriptor.
-	 * @return Return the euclidean distance between the samples.
-	 */
-	private double euclideanDistance(Collection<Double> i1, Collection<Double> i2){
-		double dist = 0.0;
-		double value;
-		
-		assert(i1.size()==i2.size()):"Nao tem o mesmo numero de caracteristicas";
-		
-		Iterator<Double> it1 = i1.iterator();
-		Iterator<Double> it2 = i2.iterator();
-		
-		while(it1.hasNext() && it2.hasNext()) 
-		{
-		   value = it1.next() - it2.next();
-		   
-		   dist += value*value;
-		}//while
-		
-		return Math.sqrt(dist);
-	}
 	
 	@Override
 	public double distance(Collection<Double> c1, Collection<Double> c2) {
 		// TODO Auto-generated method stub
-		return euclideanDistance(c1, c2);
+		return MathUtils.euclideanDistance(c1, c2);
 	}
 }

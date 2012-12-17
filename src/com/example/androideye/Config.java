@@ -59,6 +59,8 @@ public class Config {
 			descriptor = fr.readLine();
 			quality = Integer.parseInt(fr.readLine());
 			
+			fr.close();
+			
 		} catch (FileNotFoundException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();

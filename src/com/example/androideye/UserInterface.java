@@ -42,7 +42,7 @@ import android.widget.ImageButton;
 //Please forgive me for this code. I know it is ugly :P, but works
 public class UserInterface extends Activity implements OnTouchListener, RecognitionListener, SurfaceHolder{
 
-	public final static String APP_DIR = new File(Environment.getExternalStorageDirectory(), "AndroidEye").getAbsolutePath();
+	public final static String APP_DIR = Globals.APP_DIR.getAbsolutePath();
 	
 	public static final int MAX_SAMPLES = 10;
 	public static final int TOP = 3;

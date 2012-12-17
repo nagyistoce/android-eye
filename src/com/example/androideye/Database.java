@@ -133,11 +133,13 @@ public class Database {
 		try {
 			BufferedReader br = new BufferedReader(new FileReader(f));
 			s = br.readLine();
+			br.close();
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 			s = null;
 		}
+		
 		return s;
 	}
 	

@@ -1,23 +1,18 @@
 package com.example.androideye;
 
-import java.io.File;
+import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Iterator;
 import java.util.LinkedList;
-import java.util.List;
 
 import android.graphics.Bitmap;
-import android.graphics.Color;
-import android.graphics.Rect;
 import android.util.Log;
-import android.util.Pair;
 
 /**
  * Local Binary Pattern descriptor.
  * @author Alan Zanoni Peixinho.
  *
  */
-public class LocalBinaryPattern extends FaceDescriptor{
+public class LocalBinaryPattern implements FaceDescriptor{
 
 	public static final int WIDTH = 75;
 	public static final int HEIGHT = 150;
@@ -26,7 +21,6 @@ public class LocalBinaryPattern extends FaceDescriptor{
 	long time;
 	double feats[];
 	int pixels[];
-	FaceDetect detector = null;
 	
 	/**
 	 * Initialize some variables.
@@ -49,7 +43,6 @@ public class LocalBinaryPattern extends FaceDescriptor{
 	 */
 	public LocalBinaryPattern()
 	{
-		setDetector(new SkinFaceDetector());
 		initialize(1.0, 1.0);
 	}
 	
@@ -59,7 +52,6 @@ public class LocalBinaryPattern extends FaceDescriptor{
 	 * @param windowPercentage Windows size percentage used in descriptor.
 	 */
 	public LocalBinaryPattern(FaceDetect detect, double windowPercentage) {
-		setDetector(detect);
 		initialize(windowPercentage, windowPercentage);
 	}
 	
@@ -70,7 +62,6 @@ public class LocalBinaryPattern extends FaceDescriptor{
 	 * @param windowH Window height.
 	 */
 	public LocalBinaryPattern(FaceDetect detect, double windowW, double windowH) {
-		setDetector(detect);
 		initialize(windowW, windowH);
 	}
 	
@@ -80,49 +71,9 @@ public class LocalBinaryPattern extends FaceDescriptor{
 	 */
 	public LocalBinaryPattern(FaceDetect detect) {
 		// TODO Auto-generated constructor stub
-		setDetector(detect);
 		initialize(1.0, 1.0);//a janela possui o tamanho da imagem
 	}
 	
-	/**
-	 * 
-	 */
-	@Override
-	public Pair<List<String>, List<Collection<Double>> > train(Collection<String> id, Collection<File> trainSet) {
-		// TODO Auto-generated method stub
-		
-		LinkedList<Collection<Double> > list = new LinkedList<Collection<Double>>();
-		LinkedList<String> listId = new LinkedList<String>();
-		
-		Iterator<String> it = id.iterator();
-		
-		for (File file : trainSet) {
-			Log.v("LBP", "Extracting LBP of "+file.getName());
-			Bitmap b = FaceImage.loadImage(file);
-			b = FaceImage.resizeBitmap(b, 0.5, 0.5);
-			String s = it.next();
-			List<Rect> r = detector.findFaces(b);
-			
-			if(r.size()==1)
-			{
-				b = FaceImage.cropFace(b, r.get(0));
-				listId.addLast(s);
-				list.addLast(getDescriptor(b));
-			}
-		}
-		
-		return new Pair<List<String>, List<Collection<Double>> > (listId, list);
-	}
-	
-	/**
-	 * Converts a RGB color to grayscale.
-	 * @param color RGB color.
-	 * @return Return the corresponding grayscale color.
-	 */
-	private int gray(int color)
-	{
-		return (int) ((0.2126*Color.red(color)+0.7152*Color.green(color)+0.0722*Color.blue(color))%256);
-	}
 	
 	/**
 	 * Get the (x,y) pixel in the image array.
@@ -145,6 +96,7 @@ public class LocalBinaryPattern extends FaceDescriptor{
 	
 	private Collection<Double> lbp(Bitmap img){
 		
+		
 		for(int i=0; i<feats.length; ++i)
 			feats[i] = 0.0;
 	
@@ -163,9 +115,10 @@ public class LocalBinaryPattern extends FaceDescriptor{
 		Log.v("getdata", ""+(double)(t)/1000.0);
 		
 		for (int i = 0; i < pixels.length; i++) {
-			pixels[i] = gray(pixels[i]);
+			pixels[i] = (int) FaceImage.rgb2gray(pixels[i]);
+			//Log.v("LBP", "pixel["+i+"] = " + pixels[i]);
 		}
-		
+				
 		for(int i=1; i<width-1; ++i)
 		{
 			for (int j = 1; j < height-1 ; ++j) {
@@ -262,7 +215,6 @@ public class LocalBinaryPattern extends FaceDescriptor{
 		return list;
 	}
 
-	@Override
 	public Collection<Double> getDescriptor(Bitmap img) {
 		// TODO Auto-generated method stub
 		
@@ -307,59 +259,14 @@ public class LocalBinaryPattern extends FaceDescriptor{
 		return features;
 	}
 
-	@Override
 	public double timeElapsed() {
 		// TODO Auto-generated method stub
 		return ((double)time)/1000;
 	}
-
-	public void setDetector(FaceDetect f) {
-		// TODO Auto-generated method stub
-		detector = f;
-	}
 	
-	/**
-	 * Compute the Chi-Square distance between samples.
-	 * @param i1 First sample.
-	 * @param i2 Second sample.
-	 * @return Return the Chi-Square sample between samples.
-	 */
-	//chi-square distance between samples
-	private double chiSquareDistance(Collection<Double> i1, Collection<Double> i2){
-		
-		double dist = 0.0;
-		double diff;
-		double v1, v2;
-		double sum;
-		assert(i1.size()==i2.size()):"Nao tem o mesmo numero de caracteristicas";
-		
-		Iterator<Double> it1 = i1.iterator();
-		Iterator<Double> it2 = i2.iterator();
-		
-		//Log.v("Info", String.format("Features Number - distance function: %d %d", i1.size(), i2.size()));
-		
-		int nFeatures = i1.size();
-		for (int i = 0; i < nFeatures; i++)
-		{
-		   v1 = it1.next();
-		   v2 = it2.next();
-		   
-		   diff = v1 - v2;
-		   sum = v1 + v2;
-		   
-		   //Log.v("Chi Square", String.format("%f, %f", v1, v2));
-		   
-		   if(sum>0.0)
-			   dist += (diff*diff)/sum;
-		}//while
-		
-		return 0.5*dist;
-	}
-
-	@Override
 	public double distance(Collection<Double> c1, Collection<Double> c2) {
 		// TODO Auto-generated method stub
-		return chiSquareDistance(c1, c2);
+		return MathUtils.chiSquareDistance(c1, c2);
 	}
 
 }
