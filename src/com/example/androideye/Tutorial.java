@@ -5,7 +5,6 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.nio.channels.FileChannel;
 
 import android.app.Activity;
 import android.app.KeyguardManager;
@@ -31,7 +30,7 @@ import android.widget.ImageButton;
 public class Tutorial extends Activity implements OnTouchListener, RecognitionListener{
 
     private static final String TAG = "Tutorial";
-    private static final String TARGET_BASE_PATH = new File(Environment.getExternalStorageDirectory(), "AndroidEye").getAbsolutePath();
+    private static final String TARGET_BASE_PATH = Globals.APP_DIR.getAbsolutePath();
 
     static{
     	File f = new File(TARGET_BASE_PATH);
@@ -368,7 +367,7 @@ public class Tutorial extends Activity implements OnTouchListener, RecognitionLi
             in = assetManager.open(filename);
             Log.i(TAG, "Opened");
             String outFileName = null;
-            if(filename.endsWith("sendump.png") || filename.endsWith("mdef.png"))
+            if(filename.endsWith(".png"))
             	outFileName = filename.substring(0, filename.length()-4);
             else
             	outFileName = filename;

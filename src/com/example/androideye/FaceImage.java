@@ -10,6 +10,7 @@ import java.util.Iterator;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
+import android.graphics.Color;
 import android.graphics.Matrix;
 import android.graphics.Paint;
 import android.graphics.Rect;
@@ -30,7 +31,6 @@ public class FaceImage {
 	 */
 	public static Bitmap loadImage(String filename)
 	{
-		
 		Bitmap b = BitmapFactory.decodeFile(filename);
 		return b;
 	}
@@ -198,6 +198,49 @@ public class FaceImage {
 		}
 		
 		return bitmap;
+	}
+	
+	/**
+	 * Get a pixel array from image.
+	 * @param img Image
+	 * @param outArray Output array.
+	 */
+	public static void getPixelArray(Bitmap img, int outArray[]){
+		int width = img.getWidth();
+		int height = img.getHeight();
+		assert(outArray.length>=width*height):"The array is too small.";
+		img.getPixels(outArray, 0, width, 0, 0, width, height);
+	}
+	
+	/**
+	 * Get a pixel array from image.
+	 * @param img Image.
+	 * @return Output array.
+	 */
+	public static int[] getPixelArray(Bitmap img){
+		int []a = new int[img.getWidth()*img.getHeight()];
+		getPixelArray(img, a);
+		return a;
+	}
+	
+	/**
+	 * Converts a RGB image to grayscale.
+	 * @param pixels Image in array format.
+	 */
+	public static void rgb2gray(int pixels[]){
+		for (int i = 0; i < pixels.length; i++) {
+			pixels[i] = (int)rgb2gray(pixels[i]);
+		}
+	}
+	
+	/**
+	 * Converts a RGB color to grayscale.
+	 * @param color RGB color.
+	 * @return Return the corresponding grayscale color.
+	 */
+	public static double rgb2gray(int color)
+	{
+		return  Math.min(0.2126*Color.red(color)+0.7152*Color.green(color)+0.0722*Color.blue(color), 256.0);
 	}
 
 }

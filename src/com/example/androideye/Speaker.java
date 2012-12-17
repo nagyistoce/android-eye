@@ -1,6 +1,5 @@
 package com.example.androideye;
 
-import android.app.Activity;
 import android.content.Context;
 import android.speech.tts.TextToSpeech;
 import android.speech.tts.TextToSpeech.OnInitListener;
