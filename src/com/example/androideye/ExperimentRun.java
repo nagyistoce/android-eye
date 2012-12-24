@@ -40,6 +40,7 @@ public class ExperimentRun extends Activity{
 	EditText datasetEdit = null;
 	RadioButton radioLBP = null;
 	RadioButton radioASM = null;
+	RadioButton radioPCA = null;
 	
 	
 	private Handler handler = null;
@@ -75,7 +76,8 @@ public class ExperimentRun extends Activity{
         
         radioLBP = (RadioButton) findViewById(R.id.radioLBP);
         radioASM = (RadioButton) findViewById(R.id.radioASM);
-        
+        radioPCA = (RadioButton) findViewById(R.id.radioPCA);
+
         
         handler = new Handler();
         speakerOut = new Speaker(ExperimentRun.this);
@@ -96,7 +98,17 @@ public class ExperimentRun extends Activity{
 				        		 PowerManager.WakeLock wl = pm.newWakeLock(PowerManager.SCREEN_DIM_WAKE_LOCK, "My Tag");
 				        		 wl.acquire();
 				        		 
-				        		 Database.BASE_DIR = datasetEdit.getText().toString();
+				        		 if (!Database.changeBaseDir(datasetEdit.getText().toString()) ){
+				        			 handler.post(new Runnable() {
+											
+											@Override
+											public void run() {
+												// TODO Auto-generated method stub
+												edit.setText("Invalid Database");
+											}
+										});
+				        			 return;
+				        		 }
 				        		
 				        		List<File> people = Database.listPeople();
 				        		
@@ -139,21 +151,22 @@ public class ExperimentRun extends Activity{
 				        		double scaleW = Double.parseDouble(scaleEditW.getText().toString());
 				        		double scaleH = Double.parseDouble(scaleEditH.getText().toString());
 				        		
-				        		String confFile = "/mnt/sdcard/data/"+confEdit.getText().toString();
+				        		String confFileASM = "/mnt/sdcard/data/"+confEdit.getText().toString();
+				        		String confFilePCA = "/mnt/sdcard/AndroidEye/"+confEdit.getText().toString();
 				        		
 				        		FaceDescriptor f = null;
-				        		if(radioASM.isChecked())
-				        			f = new StasmLib(confFile);
-				        		else
+				        		
+				        		if(radioASM.isChecked()){
+				        			f = new StasmLib(confFileASM);
+				        		}
+				        		else if(radioLBP.isChecked()){
 				        			f = new LocalBinaryPattern(null, scaleW, scaleH);
-				        		
-				        		String pcaFile = new File(Globals.APP_DIR, "pca_95.dat").getAbsolutePath();
-				        		Log.v("Experiment", "PCA File: "+pcaFile);
-				        		f = new PrincipalComponentAnalysis(pcaFile);
-				        		
-				        		//FaceDescriptor f = new LocalBinaryPattern(null, scaleW, scaleH);
-				        		//FaceDescriptor f = new PrincipalComponentAnalysis();
-				        		//FaceDetect detector = new SkinFaceDetector();
+				        		}
+				        		else if(radioPCA.isChecked()){
+				        			Log.v("experiment", "Its PCA Baby.");
+					        		f = new PrincipalComponentAnalysis(confFilePCA);
+				        		}
+
 				        		FaceDetect detector = null;
 				        		long t = System.currentTimeMillis();
 				        		
@@ -165,92 +178,7 @@ public class ExperimentRun extends Activity{
 										edit.append("Training ...\n");
 									}
 								});
-				        		
-				        		/*
-				        		Pair<List<String>, List<Collection<Double>>> p = f.train(trainId, train);
-				        		
-				        		NearestNeighbor classifier = new NearestNeighbor();
-				        		
-				        		classifier.train(p.first, p.second);
-				        		
-				        		t = System.currentTimeMillis() - t;
-				        		Log.v("PCA",""+(((double)t)/1000)+"s");
-				        		
-				        		LinkedList<Double> timeElapsed = new LinkedList<Double>();
-				        		
-				        		
-				        		int nmistakes = 0;
-				        		int ncorrects = 0;
-				        		
-				        		t=System.currentTimeMillis();
-				        		
-				        		classifier.rank = 0;
-				        		
-				        		int i = 0;
-				        		Iterator<String> it = testId.iterator();
-				        		for (File file : test) {
-				        			String s = it.next();
-				        			Bitmap b = FaceImage.loadImage(file);
-				        			
-				        			b = FaceImage.resizeBitmap(b, 0.5, 0.5);
-				        			
-				        			List<Rect> l = detector.findFaces(b);
-				        			
-				        			for (Rect rect : l) {
-										Bitmap face = FaceImage.cropFace(b, rect);
-										Collection<Double> d = f.getDescriptor(face);
-										timeElapsed.add(f.timeElapsed());
-										
-					        			String label = classifier.classify(d, s);
-					        			
-					        			Log.v("Main", String.format("%d of %d", i+1, test.size()));
-					        			
-					        			i++;
-					        			
-					        			Log.v("Classifier", label+"<->"+s);
-					        			if(label.equals(s)){
-					        					ncorrects++;
-					        					Log.v("NN", "Correct");
-					        					final int cur_face = i;
-					        					handler.post(new Runnable() {
-					        						
-					        						@Override
-					        						public void run() {
-					        							// TODO Auto-generated method stub
-					        							edit.setText(String.format("%d -> Correct\n", cur_face));
-					        						}
-					        					});
-					        			}
-					        			else{
-					        					nmistakes++;
-					        					Log.v("NN", "Wrong");
-					        					final int cur_face = i;
-					        					handler.post(new Runnable() {
-					        						
-					        						@Override
-					        						public void run() {
-					        							// TODO Auto-generated method stub
-					        							edit.setText(String.format("%d -> Incorrect\n", cur_face));
-					        						}
-					        					});
-					        			}
-					        			final int rank = classifier.rank;
-					        			handler.post(new Runnable() {
-					    					
-					    					@Override
-					    					public void run() {
-					    						// TODO Auto-generated method stub
-					    						edit.append(String.format("Rank = %d", rank));
-					    					}
-					    				});
-					    				
-					    				
-					    				
-				        		
-				        			
-									}
-									*/
-				        		
+				        						        		
 				        			LinkedList<Double> classifyTime = new LinkedList<Double>();
 				        			LinkedList<Double> descTime = new LinkedList<Double>();
 				        			
@@ -344,10 +272,11 @@ public class ExperimentRun extends Activity{
 					        		//final int rank = classifier.rank;
 					        		final double classifyMean = MathUtils.mean(classifyTime);
 					        		final double classifyStdDev = MathUtils.stdDeviation(classifyTime, classifyMean);
+					        		final double classifyVar = MathUtils.variance(classifyTime, classifyMean);
+					        		
 					        		final double descMean = MathUtils.mean(descTime);
 					        		final double descStdDev = MathUtils.stdDeviation(descTime, descMean);
 					        		final double descVar = MathUtils.variance(descTime, descMean);
-					        		final double classifyVar = MathUtils.variance(descTime, descMean);
 
 					        		for (int i = 0; i < top; i++) {
 					        			final double acc = ((double)ncorrects[i])/(ncorrects[i]+nmistakes[i]);
@@ -373,62 +302,12 @@ public class ExperimentRun extends Activity{
 				        
 				        t.setPriority(Thread.MAX_PRIORITY);
 				        t.start();
-				        /*
-				        Bitmap b = FaceImage.loadImage("/mnt/sdcard/database/f007/f007_5.jpg");
-				        int pixels[] = new int[b.getWidth()*b.getHeight()];
-				        
-				        b.getPixels(pixels, 0, b.getWidth(), 0, 0, b.getWidth(), b.getHeight());
-				        
-				        for (int i = 0; i < pixels.length; i++) {
-							Log.v("Img", ""+pixels[i]);
-						}*/
-				        
-				        //OpenCV.save(pixels, b.getWidth(), b.getHeight(), "/mnt/sdcard/alan.bmp");
 				        
 					}
 				}
         		);
-        
-        //float a[][] = new float[150][200*200];
-        
-        //List<String> l = Database.listID();
-        
-        
-        //FaceDescriptor face = new LocalBinaryPattern();
-
-       //Iterable<Double> it = face.getDescriptor(b);
-       //face.getDescriptor(b);       
-        
-        /*try
-        {
-        	getVoiceAction();
-        }catch(ActivityNotFoundException e)
-        {
-        	speakerOut.speak("Please, install speech recognition");
-        	Intent browserIntent = new Intent(Intent.ACTION_VIEW,   Uri.parse("https://play.google.com/store/apps/details?id=com.google.android.voicesearch&hl"));
-        	startActivity(browserIntent);
-        }*/
     
 	}
-	/*
-	private void getVoiceAction() {
-        Intent intent = new Intent(RecognizerIntent.ACTION_RECOGNIZE_SPEECH);
-        intent.putExtra(RecognizerIntent.EXTRA_LANGUAGE_MODEL,RecognizerIntent.LANGUAGE_MODEL_FREE_FORM);
-        intent.putExtra(RecognizerIntent.EXTRA_MAX_RESULTS, 3);
-        intent.putExtra(RecognizerIntent.EXTRA_PROMPT, "Reconhecimento Voz");
-        startActivityForResult(intent, VOICE_ACTION_REQUEST_CODE);
-    }
 	
-	 protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-		 if(requestCode == VOICE_ACTION_REQUEST_CODE) {
-			 Log.d("Speech", "getting result resultCode=["+RESULT_OK+"]");
-			 if(resultCode == RESULT_OK){
-				 final ArrayList<String> lista = data.getStringArrayListExtra(RecognizerIntent.EXTRA_RESULTS);
-				 for(String s: lista){
-					 speakerOut.speak(s);
-				 }
-			 }
-		 }
-	}*/
 
 }

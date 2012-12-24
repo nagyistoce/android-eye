@@ -1,6 +1,7 @@
 package com.example.androideye;
 
 import java.io.DataInputStream;
+import java.io.File;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.LinkedList;
@@ -28,7 +29,11 @@ public class PrincipalComponentAnalysis implements FaceDescriptor{
 	long time;
 	
 	public PrincipalComponentAnalysis(){
-		initialize("none");
+		initialize(new File(Database.BASE_DIR, "PCA_95.dat").getAbsolutePath());
+	}
+	
+	public PrincipalComponentAnalysis(File transformFile){
+		initialize(transformFile.getAbsolutePath());
 	}
 	
 	public PrincipalComponentAnalysis(String transformFile){
@@ -40,6 +45,9 @@ public class PrincipalComponentAnalysis implements FaceDescriptor{
 		readPCA();
 	}
 	
+	/**
+	 * Read the transformation Matrix from file
+	 */
 	private void readPCA(){
 		
 		Log.v("PCA", "Reading File "+fileName);
@@ -47,16 +55,6 @@ public class PrincipalComponentAnalysis implements FaceDescriptor{
 		
 		mean = FileUtils.readFloatArray(dis);
 		trasformMatrix = FileUtils.readFloatMatrix(dis);
-		
-		/*for (int i = 0; i < trasformMatrix.length; i++) {
-			LinkedList<Double> ld = new LinkedList<Double>();
-			for (int j = 0; j < trasformMatrix[i].length; j++) {
-				ld.addLast((double)trasformMatrix[i][j]);
-			}
-			Log.v("PCA", ""+ld);
-		}*/
-		
-		//read transform matrix
 		
 	}
 	
