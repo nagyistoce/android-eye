@@ -11,4 +11,5 @@ import android.os.Environment;
  */
 public class Globals {
 	public static final File APP_DIR = new File(Environment.getExternalStorageDirectory(), "AndroidEye");
+	public static final File BASE_DIR = new File(APP_DIR, "Database");
 }

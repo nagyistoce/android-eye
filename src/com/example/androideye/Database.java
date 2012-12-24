@@ -21,7 +21,7 @@ public class Database {
 	/*
 	 /mnt/sdcard/AndroidEye/Database
 	 * */
-	public static String BASE_DIR = new File(UserInterface.APP_DIR, "Database").getAbsolutePath();
+	public static String BASE_DIR = Globals.BASE_DIR.getAbsolutePath();
 	
 	static{
 		File d = new File(BASE_DIR);
@@ -51,6 +51,26 @@ public class Database {
     	return people;
 	}
 	
+	static boolean changeBaseDir(String baseDir){
+		return changeBaseDir(new File(baseDir));
+	}
+	
+	/**
+	 * Change the database used in AndroidEye
+	 * @param baseDir The new database directory
+	 * @return 
+	 * @return True in success case, or false if the directory doesn't exist
+	 */
+	static boolean changeBaseDir(File baseDir){
+		if(baseDir.isDirectory()){
+			BASE_DIR = baseDir.getAbsolutePath();
+			return true;
+		}
+		else{
+			return false;
+		}
+	}
+	
 	/**
 	 * Split a list of images. Used to generate experiments database.
 	 * @param img List of images.
@@ -59,7 +79,7 @@ public class Database {
 	 */
 	public static Pair<LinkedList<File>, LinkedList<File> > split(List<File> img, double perc1){
 		LinkedList<File> tempList = new LinkedList<File>(img);
-		Collections.shuffle(tempList, new Random(42));
+		Collections.shuffle(tempList);
 		
 		LinkedList<File> set1 = new LinkedList<File>();
 		LinkedList<File> set2 = new LinkedList<File>();

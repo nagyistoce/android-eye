@@ -87,7 +87,7 @@ public class ContactPicker {
     	String name = cursor.getString(cursor.getColumnIndex(ContactsContract.Contacts.DISPLAY_NAME));
 	    loadContactPhoto(resolver,contactId);
 	    
-	    File dir = new File(Database.BASE_DIR, Long.toString(contactId));
+	    File dir = new File(Globals.BASE_DIR, Long.toString(contactId));
 	    File nameFile = new File(dir, "name.txt");
 	    
 	    if(!nameFile.exists())
@@ -152,7 +152,7 @@ public class ContactPicker {
         
         try {
         	
-        	File d = new File(Database.BASE_DIR, Long.toString(id));
+        	File d = new File(Globals.BASE_DIR, Long.toString(id));
         	
         	if (!d.exists()) {
 				d.mkdir();
