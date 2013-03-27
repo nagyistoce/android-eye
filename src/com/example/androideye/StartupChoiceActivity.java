@@ -15,7 +15,7 @@ import android.util.Log;
 public class StartupChoiceActivity extends Activity {
     
 	private static final String TAG = "StartupChoice";
-	private static boolean DEBUG = true;
+	private static boolean DEBUG = false;
 	
     @Override
     public void onCreate(Bundle savedInstanceState) {
