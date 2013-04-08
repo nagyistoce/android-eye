@@ -5,10 +5,13 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.util.prefs.Preferences;
 
 import android.app.Activity;
 import android.app.KeyguardManager;
 import android.app.KeyguardManager.KeyguardLock;
+import android.content.Context;
+import android.content.SharedPreferences;
 import android.content.pm.ActivityInfo;
 import android.content.res.AssetManager;
 import android.os.Bundle;
@@ -19,6 +22,7 @@ import android.view.KeyEvent;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.View.OnTouchListener;
+import android.view.accessibility.AccessibilityEvent;
 import android.view.WindowManager;
 import android.widget.ImageButton;
 
@@ -72,6 +76,8 @@ public class Tutorial extends Activity implements OnTouchListener, RecognitionLi
 	State curState = State.BUSY;
 
 	
+	Thread runningThread = null;
+	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		// TODO Auto-generated method stub
@@ -90,16 +96,42 @@ public class Tutorial extends Activity implements OnTouchListener, RecognitionLi
         
         getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
 	     
-	     Thread t = new Thread(){
+	     /*
+	         * Speech Recognition
+	         * */
+			
+		mhandler = new Handler();
+	}
+	
+	private void installExternalData()
+	{
+		callSpeaker("Wait the install process");
+		curState = Tutorial.State.BUSY;
+		copyFilesToSdCard();
+		callSpeaker("Install complete.");
+	
+	}
+	
+	@Override
+	protected void onStart() {
+		// TODO Stub de método gerado automaticamente
+		super.onStart();
+		 
+	     runningThread = new Thread(){
 	    	 @Override
 	    	public void run() {
 	    		// TODO Auto-generated method stub
-	    		curState = Tutorial.State.BUSY;
-	    		copyFilesToSdCard();
-
-	    		callSpeaker("Install complete.");
 	    		
-	    		callSpeaker("The AndroidEye UserInterface uses the voice.");
+	    	    speaker = new Speaker(Tutorial.this, "Welcome to the Android Eye.");
+	    		 
+	    		SharedPreferences mPrefs = getSharedPreferences(Globals.PersistentInfo.PREFERENCES_FILE, Context.MODE_PRIVATE);
+	    		if(!mPrefs.getBoolean(Globals.PersistentInfo.INSTALLED_EXTRA, false))
+	    		{
+	    			installExternalData();
+	    			mPrefs.edit().putBoolean(Globals.PersistentInfo.INSTALLED_EXTRA, true).commit();
+	    		}
+	    		
+	    		callSpeaker("The AndroidEye User Interface uses the voice.");
 	    		
 	    		callSpeaker("To use any command you should press and hold the screen, or the action button.");
 	    		
@@ -119,18 +151,16 @@ public class Tutorial extends Activity implements OnTouchListener, RecognitionLi
 	    	    rec_thread.start();
 	    	 }
 	     };
-	     
-	     t.start();
-	     
-	     /*
-	         * Speech Recognition
-	         * */
-			
-		mhandler = new Handler();
-
-        speaker = new Speaker(Tutorial.this.getApplicationContext(), "Welcome to the Android Eye. Please wait the install process.");
-        
+	     runningThread.start();
 	}
+	
+	@Override
+	protected void onStop() {
+		// TODO Stub de método gerado automaticamente
+		super.onStop();
+		runningThread.stop();
+	}
+	
 	
 	@Override
 	public boolean onTouch(View v, MotionEvent event) {
@@ -207,6 +237,8 @@ public class Tutorial extends Activity implements OnTouchListener, RecognitionLi
 
 	
 	public void callSpeaker(String talk){
+		
+		System.gc();
 		final String s = talk;
 		mhandler.post(new Runnable() {//necessary to access in different threads
 			
@@ -261,12 +293,22 @@ public class Tutorial extends Activity implements OnTouchListener, RecognitionLi
 	private void exitAction(String ans){
 		if(ans.contains("EXIT") || ans.contains("BYE")){
 			callSpeaker("See you later.");
+			SharedPreferences mPrefs = getSharedPreferences(Globals.PersistentInfo.PREFERENCES_FILE, Context.MODE_PRIVATE);
+            //set the tutorial as complete, it will not be called at startup
+			mPrefs.edit().putBoolean(Globals.PersistentInfo.HAS_STARTED, true).commit();
+            
 			Tutorial.this.finish();
 		}
 		else{
 			callSpeaker("Use the exit command to close the app.");
 		}
 	}
+	
+	//disable system acessibility for this activity
+    @Override
+    public boolean dispatchPopulateAccessibilityEvent(AccessibilityEvent evt) {
+        return true;
+    }
 	
 	private void updateAction(String ans){
 		if(ans.contains("UPDATE")){

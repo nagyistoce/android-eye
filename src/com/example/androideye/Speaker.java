@@ -1,6 +1,9 @@
 package com.example.androideye;
 
+import java.util.Locale;
+
 import android.content.Context;
+import android.content.Intent;
 import android.speech.tts.TextToSpeech;
 import android.speech.tts.TextToSpeech.OnInitListener;
 import android.util.Log;
@@ -23,8 +26,10 @@ public class Speaker implements OnInitListener{
 	 */
 	private void initialize(Context context){
 		c = context;
+		
 		Log.v("Speaker", "Creating Text To Speech");
         tts = new TextToSpeech(c, this);
+        Log.v("Speaker", "TTS variable: " + tts);
 	}
 	/**
 	 * Initialize text to speech
@@ -82,9 +87,12 @@ public class Speaker implements OnInitListener{
     }
 
 	@Override
-	public void onInit(int arg0) {
+	public void onInit(int initStatus) {
 		// TODO Auto-generated method stub
 		Log.v("Speaker", "Initializing ...");
+		
+		tts.setLanguage(Locale.US);
+		Log.v("Speaker", "It seems its working ...");
 		if(fs!=null)
 			speak(fs);
 		fs = null;//free to garbage collector

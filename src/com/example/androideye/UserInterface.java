@@ -4,6 +4,7 @@ import java.io.File;
 import java.io.IOException;
 import java.util.Collection;
 import java.util.Iterator;
+import java.util.Timer;
 
 import android.app.Activity;
 import android.app.KeyguardManager;
@@ -31,6 +32,7 @@ import android.view.SurfaceHolder;
 import android.view.View;
 import android.view.View.OnTouchListener;
 import android.view.WindowManager;
+import android.view.accessibility.AccessibilityEvent;
 import android.widget.ImageButton;
 
 
@@ -48,6 +50,8 @@ public class UserInterface extends Activity implements OnTouchListener, Recognit
 	public static final int TOP = 3;
 	public static final double DETECT_SCALE = 0.5;
 
+	public static final String TAG = "UserInterface";
+	
 	ImageButton speakButton = null;
 	
 	Camera.PictureCallback jpegPictureCallback = null;
@@ -98,6 +102,7 @@ public class UserInterface extends Activity implements OnTouchListener, Recognit
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        
        
         /*
          * Disable App Rotation, Key Lock and Screen shutdown
@@ -144,6 +149,7 @@ public class UserInterface extends Activity implements OnTouchListener, Recognit
 			public void onPictureTaken(byte[] data,
 					android.hardware.Camera camera) {
 				// TODO Auto-generated method stub
+				Log.v(TAG, "JPEG Callback");
 				Log.v("CAMERA", "Calling jpeg callback.");
 								
 				// load bitmap from resources
@@ -179,6 +185,7 @@ public class UserInterface extends Activity implements OnTouchListener, Recognit
 			@Override
 			public void onPictureTaken(byte[] data, Camera camera) {
 				// TODO Auto-generated method stub
+				Log.v(TAG, "Preview Callback");
 				
 			}
 		};
@@ -188,22 +195,37 @@ public class UserInterface extends Activity implements OnTouchListener, Recognit
 			@Override
 			public void onShutter() {
 				// TODO Auto-generated method stub
-				
+				Log.v(TAG, "Shutter Callback");
 			}
 		};
 		/*
          * Text to Speech
          * */
-		String s = null;
-		if(classifier.isTrained())
-				s = "Welcome to Android Eye.\nWhat you want to do?";
-		else
-				s = "Your database is empty. Call the update and train commands.";
-        speaker = new Speaker(UserInterface.this.getApplicationContext(), s);        
+        speaker = new Speaker(this, "Welcome to the Android Eye.");    
+    }
+    
+    //disable system acessibility for this activity
+    @Override
+    public boolean dispatchPopulateAccessibilityEvent(AccessibilityEvent evt) {
+        return true;
+    }
+    
+    @Override
+    protected void onStart() {
+    	// TODO Stub de método gerado automaticamente
+    	super.onStart();
+    	String s;
+    	if(classifier.isTrained())
+			s = "What you want to do?";
+    	else
+			s = "Your database is empty. Call the update and train commands.";
+    	callSpeaker(s);
     }
     
     private void recognize(Bitmap bitmap){
     	 	
+    	Log.v(TAG, "Recognizing ...");
+    	
     	final Bitmap bmp = bitmap;
     	//final Bitmap bmp = FaceImage.loadImage(new File(APP_DIR, "camera2.jpg"));
     	if (!classifier.isTrained()) {
