@@ -1,0 +1,1 @@
+Android Eye is a face recognition software that wants to help blind people in the people recognition.
